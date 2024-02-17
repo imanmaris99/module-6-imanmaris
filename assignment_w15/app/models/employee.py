@@ -5,4 +5,6 @@ class Employee(db.Model):
     name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.Integer, nullable=True)
     email = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(100), nullable=True)
+    schedule = db.Column(db.String(100), nullable=True)
 
