@@ -1,6 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, json
 from app.utils.database import db
 from app.models.employee import Employee
+from app.service import employee_service
+from app.utils.api_response import api_response
 
 
 employee_blueprint = Blueprint('customer_endpoint', __name__)
@@ -9,7 +11,7 @@ employee_blueprint = Blueprint('customer_endpoint', __name__)
 def create_employee():
     try:
         # Ambil data pelanggan dari permintaan POST
-        data = request.get_json()
+        data = request.json
 
         # Pastikan data yang diperlukan tersedia
         if 'name' not in data or 'phone' not in data:
@@ -28,7 +30,13 @@ def create_employee():
         db.session.commit()
 
         # Kirim respons JSON dengan ID pelanggan yang baru saja dibuat
-        return jsonify({'id': employee.id,'name': employee.name,'email': employee.email, 'phone': employee.phone, 'role': employee.role}), 201
+        # return jsonify({'id': employee.id,'name': employee.name,'email': employee.email, 'phone': employee.phone, 'role': employee.role}), 201
+        return api_response(
+            status_code=201,
+            message="success input data",
+            data=[employee.as_dict()]
+        )
+    
     except Exception as e:
         # Tangani kesalahan server jika ada
         return jsonify({'error': 'Kesalahan server: {}'.format(str(e))}), 500
@@ -36,16 +44,14 @@ def create_employee():
 @employee_blueprint.route('/', methods=['GET'])
 def get_employees():
     try:
-        employees = Employee.query.all()
-        employee_list = [{
-            'id': employee.id, 
-            'name': employee.name, 
-            'email': employee.email ,
-            'phone': employee.phone, 
-            'role': employee.role,
-            'schedule': employee.schedule} 
-            for employee in employees]
-        return jsonify(employee_list), 200
+        employees = employee_service.get_employees()
+        # return employees
+        return api_response(
+            status_code = 201,
+            message ="Daftar binatang sukses diakses",
+            data = employees
+        )
+    
     except Exception as e:
         return 'Kesalahan server: {}'.format(str(e)), 500
     
@@ -53,15 +59,14 @@ def get_employees():
 def get_employee(employee_id):
     try:
         employee = Employee.query.get(employee_id)
-        employee_list = [{'id': employee.id, 'name': employee.name, 'email': employee.email ,'phone': employee.phone, 'role': employee.role,'schedule': employee.schedule}]
-        return jsonify(employee_list), 200
+        return employee.as_dict(), 200
     except Exception as e:
         return 'Kesalahan server: {}'.format(str(e)), 500
 
 @employee_blueprint.route('//<int:employee_id>', methods=['PUT'])
 def update_employee(employee_id):
     try:
-        employee = Employee.query.get(employee_id)
+        employee = employee_service.update_employee(employee_id)
 
         if not employee:
             return 'Karyawan tidak terdaftar', 404
@@ -99,7 +104,13 @@ def delete_employee(employee_id):
         if employee:
             db.session.delete(employee)
             db.session.commit()
-            return jsonify({'message': 'Data karyawan berhasil dihapus'}), 200
+            # return jsonify({'message': 'Data karyawan berhasil dihapus'}), 200
+            return api_response(
+            status_code=200,
+            message="Data karyawan berhasil dihapus (sudah resign)",
+            data=[employee.as_dict()]
+        )
+        
         else:
             return jsonify({'message': 'Karyawan tidak terdaftar'}), 404
     except Exception as e:

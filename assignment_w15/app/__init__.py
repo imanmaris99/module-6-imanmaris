@@ -1,8 +1,9 @@
 from flask import Flask
-from app.route import animal_route,employee_route
+from app.controller.animal import animal_route
+from app.controller.employee import employee_route
 import os
-from app.utils.database import db
-
+from app.utils.database import db, migrate
+from app.models import animal
 
 app = Flask(__name__)
 
@@ -17,7 +18,11 @@ DATABASE_PORT = os.getenv('DATABASE_PORT')
 app.config["SQLALCHEMY_DATABASE_URI"] = f"{DATABASE_TYPE}://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"
 
 db.init_app(app)
+migrate.init_app(app, db)
 
 # Perbaikan: Gunakan url_prefix yang benar sesuai kebutuhan Anda
 app.register_blueprint(animal_route.animal_blueprint, url_prefix='/animal')
 app.register_blueprint(employee_route.employee_blueprint, url_prefix='/employee')
+
+# implementasi versioning api agar lebih ringkas bisa seperti ini, contohnya
+# app.register_blueprint(animal_route.animal_blueprint, url_prefix='/v1/animal')
