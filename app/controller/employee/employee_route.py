@@ -47,8 +47,8 @@ def get_employees():
         employees = employee_service.get_employees()
         # return employees
         return api_response(
-            status_code = 201,
-            message ="Daftar binatang sukses diakses",
+            status_code = 200,
+            message ="Daftar semua karyawan sukses diakses",
             data = employees
         )
     
