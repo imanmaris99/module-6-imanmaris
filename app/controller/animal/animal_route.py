@@ -49,7 +49,7 @@ def get_animals():
         animals = animal_service.get_animals()
         # return [animal.as_dict() for animal in animals], 200
         return api_response(
-            status_code=201,
+            status_code=200,
             message="Daftar binatang sukses diakses",
             data=animals
         )  

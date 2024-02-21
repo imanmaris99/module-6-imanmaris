@@ -1,6 +1,14 @@
 
 # BACKUP-FILE-TUGAS WEEK15 (->PAKAI DOCKERFILE )
 
+### Deployment with RAILWAY
+
+**Result deployment :**
+
+|       Tool     | Tool Website | My Link Production API |Testing in Postman|
+|----------------|--------------|------------------------|--------|
+|<img width="55%" img src="https://railway.app/brand/logotype-light.png">|[RailWay](https://railway.com/) |[backup-w15-use-docker-production.up.railway.app](https://backup-w15-use-docker-production.up.railway.app)|[/animal]() or [/employee]()|
+
 
 ### Documentation API with POSTMAN
 
