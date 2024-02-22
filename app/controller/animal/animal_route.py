@@ -16,8 +16,18 @@ def create_animal():
 
     # Pastikan data yang diperlukan tersedia
         if 'species' not in data or 'age' not in data:
-            return jsonify({'error': 'Data binatang tidak lengkap'}), 400
-
+            return api_response(
+                status_code=400,
+                message="Data kurang lengkap",
+                data={  "contoh inputan ":
+                        {
+                            "age":8,
+                            "gender": "Male",
+                            "special_requirement": "{\"badan cokelat\",\"tanduk-2\"}",
+                            "species": "Sapi"
+                        }                       
+                }
+            )   
         # Buat objek Customer dari data yang diterima
         animal = Animal()
         animal.species = data['species']
@@ -36,10 +46,13 @@ def create_animal():
             message="success input data",
             data=[animal.as_dict()]
         )
-    
     except Exception as e:
         # Tangani kesalahan server jika ada
-        return jsonify({'error': 'Kesalahan server: {}'.format(str(e))}), 500
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        )       
 
 
 @animal_blueprint.route('/', methods=['GET'])
@@ -53,39 +66,65 @@ def get_animals():
             message="Daftar binatang sukses diakses",
             data=animals
         )  
-
     except Exception as e:
-        return e, 500
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        )       
     
 
 @animal_blueprint.route('/search', methods=['GET'])
 def search_animals():
     try:
         request_data = request.args
-
+        
         animal_service = Animal_service()
         animals = animal_service.search_animals(request_data['species'])
-
+        if animals:
         # return [animal.as_dict() for animal in animals], 200
-        return api_response(
-            status_code=200,
-            message="Daftar binatang yang dicari sukses diakses",
-            data=animals
-        )  
-
+            return api_response(
+                status_code=200,
+                message="Daftar binatang yang dicari sukses diakses",
+                data=animals
+            )  
+        else:
+            return api_response(
+                status_code=400,
+                message="Data binatang yang dicari tidak ditemukan",
+                data={}
+            )   
     except Exception as e:
-        return e, 500
-    
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        )       
 
 
 @animal_blueprint.route('//<int:animal_id>', methods=['GET'])
 def get_animal(animal_id):
     try:
         animal = Animal.query.get(animal_id)
-        return animal.as_dict(), 200
+        if animal:
+            return api_response(
+                status_code=200,
+                message="Data dari id binatang berhasil ditampilkan",
+                data=[animal.as_dict()]
+            )  
+        else:
+            return api_response(
+                status_code=400,
+                message="Data binatang tidak ditemukan",
+                data={}
+            )  
     except Exception as e:
-        return e, 500
-
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        )   
+    
 @animal_blueprint.route('//<int:animal_id>', methods=['PUT'])
 def update_animal(animal_id):
     try:
@@ -129,10 +168,13 @@ def update_animal(animal_id):
             message=e.errors(),
             data={}
         )     
-    
     except Exception as e:
-        return jsonify({'error': 'Kesalahan server: {}'.format(str(e))}), 500
-
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        )   
+    
 @animal_blueprint.route('//<int:animal_id>', methods=['DELETE'])
 def delete_animal(animal_id):
     try:
@@ -144,9 +186,18 @@ def delete_animal(animal_id):
             return api_response(
             status_code=200,
             message="Data binatang berhasil dihapus",
-            data=[animal.as_dict()]
+            # data=[animal.as_dict()]
+            data={}
         )
         else:
-            return jsonify({'message': 'Binatang tidak terdaftar'}), 404
+            return api_response(
+                status_code=400,
+                message="Data binatang tidak ditemukan",
+                data={}
+            )       
     except Exception as e:
-        return 'Kesalahan server: {}'.format(str(e)), 500
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        ) 

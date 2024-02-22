@@ -1,9 +1,10 @@
 from flask import Flask
 from app.controller.animal import animal_route
 from app.controller.employee import employee_route
+from app.controller.feeding import feeding_route, enclosure_route
 import os
 from app.utils.database import db, migrate
-from app.models import animal
+from app.models import enclosure
 
 app = Flask(__name__)
 
@@ -23,6 +24,8 @@ migrate.init_app(app, db)
 # Perbaikan: Gunakan url_prefix yang benar sesuai kebutuhan Anda
 app.register_blueprint(animal_route.animal_blueprint, url_prefix='/animal')
 app.register_blueprint(employee_route.employee_blueprint, url_prefix='/employee')
+app.register_blueprint(feeding_route.feeding_blueprint, url_prefix='/feeding')
+app.register_blueprint(enclosure_route.enclosure_blueprint, url_prefix='/enclosure')
 
 # implementasi versioning api agar lebih ringkas bisa seperti ini, contohnya
 # app.register_blueprint(animal_route.animal_blueprint, url_prefix='/v1/animal')

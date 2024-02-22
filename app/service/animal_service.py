@@ -1,6 +1,16 @@
 
 from app.repositories.animal_repo import Animal_repo
+from app.repositories.animal_repo import Enclosure_repo
 
+
+class Enclosure_service:
+    def __init__(self):
+        self.enclosure_repo = Enclosure_repo()
+
+    def get_enclosures(self):
+        enclosures = self.enclosure_repo.get_enclosures()
+        return [enclosure.as_dict() for enclosure in enclosures]
+    
 class Animal_service:
     def __init__(self):
         self.animal_repo = Animal_repo()
