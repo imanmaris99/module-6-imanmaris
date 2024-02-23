@@ -4,6 +4,7 @@ from app.utils.database import db
 from app.utils.api_response import api_response
 from app.service.animal_service import Animal_service
 from app.controller.animal.schema.update_animal_request import Update_animal_request
+from app.controller.animal.schema.create_animal_request import Create_animal_request
 from pydantic import ValidationError
 
 animal_blueprint = Blueprint('animal_endpoint', __name__)
@@ -28,23 +29,27 @@ def create_animal():
                         }                       
                 }
             )   
-        # Buat objek Customer dari data yang diterima
-        animal = Animal()
-        animal.species = data['species']
-        animal.age = data['age']
-        animal.gender = data['gender']
-        animal.special_requirement = data['special_requirement']
+        # # Buat objek Customer dari data yang diterima
+        # animal = Animal()
+        # animal.species = data['species']
+        # animal.age = data['age']
+        # animal.gender = data['gender']
+        # animal.special_requirement = data['special_requirement']
 
-        # Tambahkan pelanggan ke session database dan commit transaksi
-        db.session.add(animal)
-        db.session.commit()
+        # # Tambahkan pelanggan ke session database dan commit transaksi
+        # db.session.add(animal)
+        # db.session.commit()
 
-        # Kirim respons JSON dengan ID pelanggan yang baru saja dibuat
-        # return jsonify({'id': animal.id,'species': animal.species,'age': animal.age, 'gender': animal.gender, 'special_requirement': animal.special_requirement}), 201
+        Update_animal_request = Create_animal_request(**data)
+
+        animal_service = Animal_service()
+
+        animals = animal_service.create_animal(Update_animal_request)
+
         return api_response(
             status_code=201,
             message="success input data",
-            data=[animal.as_dict()]
+            data=animals
         )
     except Exception as e:
         # Tangani kesalahan server jika ada
@@ -178,23 +183,37 @@ def update_animal(animal_id):
 @animal_blueprint.route('//<int:animal_id>', methods=['DELETE'])
 def delete_animal(animal_id):
     try:
-        animal = Animal.query.get(animal_id)
-        if animal:
-            db.session.delete(animal)
-            db.session.commit()
-            # return jsonify({'message': 'Data Binatang berhasil dihapus'}), 200
+        # animal = Animal.query.get(animal_id)
+        animal_service = Animal_service()
+
+        animal = animal_service.delete_animal(animal_id)
+        # if animal:
+        #     db.session.delete(animal)
+        #     db.session.commit()
+        #     # return jsonify({'message': 'Data Binatang berhasil dihapus'}), 200
+        #     return api_response(
+        #     status_code=200,
+        #     message="Data binatang berhasil dihapus",
+        #     # data=[animal.as_dict()]
+        #     data={}
+        # )
+        # else:
+        #     return api_response(
+        #         status_code=400,
+        #         message="Data binatang tidak ditemukan",
+        #         data={}
+        #     )       
+        if animal == "Animal not available":
             return api_response(
+                status_code=404,
+                message=animal,
+                data={}
+            )
+        return api_response(
             status_code=200,
             message="Data binatang berhasil dihapus",
-            # data=[animal.as_dict()]
-            data={}
+            data=animal
         )
-        else:
-            return api_response(
-                status_code=400,
-                message="Data binatang tidak ditemukan",
-                data={}
-            )       
     except Exception as e:
         return api_response(
             status_code=500,

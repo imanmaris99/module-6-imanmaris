@@ -1,65 +1,128 @@
 
+from app import db
+from app.service.animal_service import Animal_service
 
-def test_get_animals(test_app):
-    response = test_app.get("/animal/")
-    assert len(response.json['data']) == 1
+# ----------------------START TEST GET ANIMALS-----------------------------------
 
-def test_create_animal(test_app):
-    data = {
+def test_get_animals(test_app, mocker):
+    # arrange
+    mock_animal_data = [
+        {
             "age": 3,
             "gender": "Female",
+            "id":1,
             "special_requirement": "{\"paruh kuning\",\"leher pendek\"}",
             "species": "bebek"
         }
-    expected_response = {
-            "age": 3,
-            "gender": "Female",
-            "id":32,
-            "special_requirement": "{\"paruh kuning\",\"leher pendek\"}",
-            "species": "bebek"
+    ]
+    mocker.patch.object(Animal_service, 'get_animals', return_value=mock_animal_data)
+    
+    # act
+    with test_app.test_client() as client:
+        response = client.get("/animal/")
+
+    # assert
+    assert response.status_code == 200
+    assert len(response.json['data']) == len(mock_animal_data)
+    assert response.json['data'] == mock_animal_data
+
+# ----------------------END TEST GET ANIMALS-----------------------------------
+    
+
+# ----------------------START TEST CREATE/POST ANIMALS-----------------------------------
+def test_create_animal(test_app, mocker):
+    # Arrange
+    data = {
+        "age": 3,
+        "gender": "Female",
+        "special_requirement": "{\"paruh merah\",\"leher panjang\"}",
+        "species": "angsa"
     }
-    response = test_app.post("/animal/", json=data)
-    assert response.json == expected_response
-    assert response.status_code == 201  
+
+    mocker.patch.object(Animal_service, 'create_animal', return_value=data)
+
+    # Act
+    with test_app.test_client() as client:
+        response = client.post("/animal/", json=data)
+
+    # Assert
+    assert response.status_code == 201 
+    assert response.json['data'] == data 
 
 def test_create_animal_400(test_app):
+    # Arrange
     data = {}
-    response = test_app.post("/animal/", json=data)
+
+    # Act
+    with test_app.test_client() as client:
+        response = client.post("/animal/", json=data)
+
+    # Assert
     assert response.status_code == 400 
+    assert response.json['data'] == {  "contoh inputan ":
+                        {
+                            "age":8,
+                            "gender": "Male",
+                            "special_requirement": "{\"badan cokelat\",\"tanduk-2\"}",
+                            "species": "Sapi"
+                        }                       
+                }
+# ----------------------END TEST CREATE ANIMALS-----------------------------------
+    
 
-
-def test_update_animal(test_app):
+# ----------------------START TEST UPDATE/PUT ANIMALS-----------------------------------    
+def test_update_animal(test_app, mocker):
+    # arrange
     data = {
-        "species": "Unta",
-        "age": 15,
-        "special_requirement":"{2-Punuk,\"kaki panjang\"}"
+        "age": 3,
+        "gender": "Male",
+        "special_requirement": "{\"paruh merah\",\"leher panjang\"}",
+        "species": "angsa"
     }
-    response = test_app.put("/animal/3", json=data)
+    mocker.patch.object(Animal_service, 'update_animal', return_value=data)
+
+    # act
+    with test_app.test_client() as client:
+        response = client.put("/animal/3", json=data)
+    
+    # assert
     assert response.status_code == 200
 
 
 def test_update_animal_400(test_app):
+    # arrange
     data = {}
-    response = test_app.put("/animal/3", json=data)
+
+    # act
+    with test_app.test_client() as client:
+        response = client.put("/animal/3", json=data)
+        
+    # assert
     assert response.status_code == 400
 
+# ----------------------END TEST UPDATE ANIMALS-----------------------------------
     
-def test_delete_animal(test_app):
-    data = {
-            "age": 3,
-            "gender": "Female",
-            "special_requirement": "{\"paruh kuning\",\"leher pendek\"}",
-            "species": "bebek"
-        }
+
+# ----------------------START TEST DELETE ANIMALS-----------------------------------   
+    
+def test_delete_animal(test_app, mocker):
+    # arrange
     expected_response = {
             "age": 3,
-            "id":32,
             "gender": "Female",
             "special_requirement": "{\"paruh kuning\",\"leher pendek\"}",
             "species": "bebek"
     }
-    response = test_app.delete("/animal/32", json=data)
-    assert response.json['data'] == expected_response
+    mocker.patch.object(Animal_service, 'delete_animal', return_value=expected_response)
+    
+    # act
+    with test_app.test_client() as client:
+        response = client.delete("/animal/3")
+    
+    # assert                            #  )
     assert response.status_code == 200  
-    # assert response.message == "Data binatang berhasil dihapus"
+    assert response.json['data'] == expected_response
+
+
+# ----------------------END TEST DELETE ANIMALS-----------------------------------
     
