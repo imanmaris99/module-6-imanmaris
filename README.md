@@ -8,7 +8,7 @@
 |       Testing Media    | Name | Unit Testing |
 |----------------|--------------|------------------------|
 |Controller|Animal|[def test_create_animal(test_app, mocker)](https://) // [def test_create_animal_400(test_app)](https://) // [def test_update_animal(test_app, mocker)](https://) // [def test_delete_animal(test_app, mocker)](https://) //|
-|Controller|Employee|not yet..|
+|Controller|Employee|[def test_get_employees(test_app, mocker)](https://) // [def test_create_employee_400(test_app)](https://) // [def test_update_employee(test_app, mocker)](https://) // [def test_delete_employee(test_app, mocker)](https://) //|
 
 ### Deployment with RAILWAY
 
