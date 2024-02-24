@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, json, request
 from app.models.animal import Animal
-from app.utils.database import db
+# from app.utils.database import db
 from app.utils.api_response import api_response
 from app.service.animal_service import Animal_service
 from app.controller.animal.schema.update_animal_request import Update_animal_request
