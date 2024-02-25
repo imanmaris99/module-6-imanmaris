@@ -80,3 +80,26 @@ def get_enclosures():
             message=str(e),
             data={}
         )  
+
+@enclosure_blueprint.route('//<int:enclosure_id>', methods=['GET'])
+def get_enclosure(enclosure_id):
+    try:
+        enclosure = Enclosure.query.get(enclosure_id)
+        if enclosure:
+            return api_response(
+                status_code=200,
+                message="Data dari id kandang berhasil ditampilkan",
+                data=[enclosure.as_dict()]
+            )  
+        else:
+            return api_response(
+                status_code=400,
+                message="Data id kandang tidak ditemukan",
+                data={}
+            )  
+    except Exception as e:
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        )   
