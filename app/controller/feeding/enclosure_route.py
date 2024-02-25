@@ -71,7 +71,7 @@ def get_enclosures():
 
         return api_response(
             status_code=200,
-            message="Daftar lokasi kandang sukses diakses",
+            message="Daftar seluruh lokasi kandang sukses diakses",
             data=enclosures
         )  
     except Exception as e:
