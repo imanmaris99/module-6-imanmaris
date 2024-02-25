@@ -51,7 +51,7 @@ def get_feedings():
 
         return api_response(
             status_code = 200,
-            message ="Daftar semua karyawan sukses diakses",
+            message ="Daftar semua jadwal pemberian pakan hewan sukses diakses",
             data = feedings
         )
     
