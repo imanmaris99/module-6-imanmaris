@@ -2,6 +2,7 @@
 from app.repositories.animal_repo import Animal_repo
 from app.repositories.animal_repo import Enclosure_repo
 from app.models.animal import Animal
+from app.models.enclosure import Enclosure
 
 class Enclosure_service:
     def __init__(self):
@@ -10,6 +11,15 @@ class Enclosure_service:
     def get_enclosures(self):
         enclosures = self.enclosure_repo.get_enclosures()
         return [enclosure.as_dict() for enclosure in enclosures]
+    
+    def create_enclosure(self, enclosure_data_dto):
+        enclosure = Enclosure()
+
+        enclosure.location = enclosure_data_dto.location
+
+        created_enclosure = self.enclosure_repo.create_enclosure(enclosure)
+        return created_enclosure.as_dict()
+    
     
 class Animal_service:
     def __init__(self):

@@ -4,7 +4,7 @@ from app.controller.employee import employee_route
 from app.controller.feeding import feeding_route, enclosure_route
 import os
 from app.utils.database import db, migrate
-from app.models import enclosure
+# from app.models import enclosure
 
 app = Flask(__name__)
 

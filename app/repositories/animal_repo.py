@@ -9,6 +9,11 @@ class Enclosure_repo():
         enclosures = Enclosure.query.all()
         return enclosures
     
+    def create_enclosure(self, enclosure):
+        db.session.add(enclosure)
+        db.session.commit()
+        return enclosure
+    
 
 class Animal_repo():
     def get_animals(self):
