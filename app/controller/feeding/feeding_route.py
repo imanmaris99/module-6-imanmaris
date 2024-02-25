@@ -61,3 +61,26 @@ def get_feedings():
             message=str(e),
             data={}
         )
+
+@feeding_blueprint.route('//<int:feeding_id>', methods=['GET'])
+def get_feeding(feeding_id):
+    try:
+        feeding = Feeding.query.get(feeding_id)
+        if feeding:
+            return api_response(
+                status_code=200,
+                message="Data dari id jadwal pemberian pakan harian berhasil ditampilkan",
+                data=[feeding.as_dict()]
+            )  
+        else:
+            return api_response(
+                status_code=400,
+                message="Data id tidak ditemukan",
+                data={}
+            )  
+    except Exception as e:
+        return api_response(
+            status_code=500,
+            message=str(e),
+            data={}
+        )   
